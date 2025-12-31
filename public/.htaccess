@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Remove index.php from URLs
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+
+    # Deny access to hidden files and directories
+    RewriteRule "^\." - [F]
+
+    # Security headers
+    <IfModule mod_headers.c>
+        Header set X-Frame-Options "SAMEORIGIN"
+        Header set X-Content-Type-Options "nosniff"
+        Header set X-XSS-Protection "1; mode=block"
+        Header set Referrer-Policy "strict-origin-when-cross-origin"
+    </IfModule>
+</IfModule>
+
+# Disable directory listing
+Options -Indexes
+
+# Handle errors
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+# Deny direct access to .env file
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
